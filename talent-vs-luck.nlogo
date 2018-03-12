@@ -54,15 +54,43 @@ to go
   ]
   ask people [
     if people-move [ move ]
-    if count (lucky-events-here) >= 1 and (talent > random 1)
-      [ set capital capital * 2 ]
-    if count unlucky-events-here >= 1
-      [ set capital capital / 2 ]
+    interact-with-events
 
     set outlist list (talent) (capital)
   ]
   tick
   display-labels
+end
+
+to interact-with-events
+  if events-die = true
+    [ interact-with-events-that-die ]
+  if events-die = false
+    [ interact-with-events-persistent ]
+end
+
+to interact-with-events-that-die
+  let lucky-event-prey one-of lucky-events-here
+  if lucky-event-prey != nobody [
+    ask lucky-event-prey [ die ]
+    if (talent > random 1) [
+      set capital capital * 2
+    ]
+  ]
+  let unlucky-event-prey one-of unlucky-events-here
+  if unlucky-event-prey != nobody [
+    ask unlucky-event-prey [ die ]
+    if (talent > random 1) [
+      set capital capital / 2
+    ]
+  ]
+end
+
+to interact-with-events-persistent
+  if count (lucky-events-here) >= 1 and (talent > random 1)
+    [ set capital capital * 2 ]
+  if count unlucky-events-here >= 1
+    [ set capital capital / 2 ]
 end
 
 to move  ; turtle procedure
@@ -88,8 +116,8 @@ end
 GRAPHICS-WINDOW
 479
 15
-1122
-659
+886
+423
 -1
 -1
 7.84314
@@ -102,10 +130,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--40
-40
--40
-40
+-25
+25
+-25
+25
 1
 1
 1
@@ -263,6 +291,28 @@ SWITCH
 338
 people-move
 people-move
+1
+1
+-1000
+
+MONITOR
+115
+395
+387
+440
+Talent of Highest Earner(s)
+[talent] of people with-max [capital]
+17
+1
+11
+
+SWITCH
+150
+270
+272
+303
+events-die
+events-die
 1
 1
 -1000
